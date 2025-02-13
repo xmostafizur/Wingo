@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HGZY Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fee;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #ff6666;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+
+        .container {
+            margin: 20px;
+        }
+
+        .how-to-play {
+            background-color: white;
+            border: 1px solid #ff6666;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .winning-numbers span {
+            font-size: 20px;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .green { background-color: green; color: white; }
+        .red { background-color: red; color: white; }
+        .violet { background-color: purple; color: white; }
+
+        .timer {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .bet-section {
+            margin-top: 20px;
+        }
+
+        .green-btn, .violet-btn, .red-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: transform 0.2s ease;
+        }
+
+        .green-btn { background-color: green; color: white; }
+        .violet-btn { background-color: purple; color: white; }
+        .red-btn { background-color: red; color: white; }
+
+        .numbers-grid button {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            font-size: 18px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .multipliers button {
+            margin: 5px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .size-buttons {
+            margin-top: 15px;
+        }
+
+        .big, .small {
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: transform 0.2s ease;
+        }
+
+        .big { background-color: orange; }
+        .small { background-color: blue; color: white; }
+
+        .game-history {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #ff6666;
+            color: white;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .popup.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .balance-section {
+            margin-top: 20px;
+        }
+
+        .balance-section input {
+            padding: 10px;
+            font-size: 16px;
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        .balance-section button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .selected {
+            border: 2px solid yellow;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            .winning-numbers span {
+                font-size: 16px;
+                padding: 8px;
+            }
+            .bet-section button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            .numbers-grid button {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>HGZY</h1>
+    </div>
+
+    <div class="container">
+        <div class="info">
+            <button class="how-to-play">How to play</button>
+            <p>Win Go 30s</p>
+            <div class="winning-numbers">
+                <span class="green">3</span>
+                <span class="green">7</span>
+                <span class="violet">0</span>
+                <span class="green">3</span>
+                <span class="green">3</span>
+            </div>
+            <div class="timer">
+                <p>Time remaining</p>
+                <span id="countdown">00:30</span>
+            </div>
+        </div>
+
+        <div class="balance-section">
+            <p>Your Balance: <span id="balance">1000</span></p>
+            <input type="number" id="bet-amount" placeholder="Enter bet amount" min="1">
+            <button id="confirm-bet">Confirm Bet</button>
+        </div>
+
+        <div class="bet-section">
+            <button class="green-btn">Green</button>
+            <button class="violet-btn">Violet</button>
+            <button class="red-btn">Red</button>
+
+            <div class="numbers-grid">
+                <button class="num green">1</button>
+                <button class="num red">2</button>
+                <button class="num red">3</button>
+                <button class="num red">4</button>
+                <button class="num violet">5</button>
+                <button class="num red">6</button>
+                <button class="num green">7</button>
+                <button class="num red">8</button>
+                <button class="num green">9</button>
+            </div>
+
+            <div class="multipliers">
+                <button class="random">Random</button>
+                <button class="x1">X1</button>
+                <button class="x5">X5</button>
+                <button class="x10">X10</button>
+                <button class="x20">X20</button>
+                <button class="x50">X50</button>
+                <button class="x100">X100</button>
+            </div>
+
+            <div class="size-buttons">
+                <button class="big">Big</button>
+                <button class="small">Small</button>
+            </div>
+        </div>
+
+        <div class="game-history">
+            <h2>Game History</h2>
+            <table>
+                <tr>
+                    <th>Period</th>
+                    <th>Number</th>
+                    <th>Big Small</th>
+                    <th>Color</th>
+                </tr>
+                <tbody id="history"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="popup" id="popup">
+        <p id="popup-message"></p>
+        <button id="close-popup">Close</button>
+    </div>
+
+    <audio id="win-sound" src="win.mp3"></audio>
+    <audio id="lose-sound" src="lose.mp3"></audio>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let countdown = 30;
+            let countdownElement = document.getElementById("countdown");
+            let currentBet = null;
+            let currentMultiplier = 1;
+            let currentAmount = 0;
+            let balance = 1000;
+            let balanceElement = document.getElementById("balance");
+            let betAmountInput = document.getElementById("bet-amount");
+            let confirmBetButton = document.getElementById("confirm-bet");
+            let closePopupButton = document.getElementById("close-popup");
+
+            // Load balance and history from local storage
+            function loadBalance() {
+                let savedBalance = localStorage.getItem("balance");
+                if (savedBalance) {
+                    balance = parseInt(savedBalance);
+                    balanceElement.textContent = balance;
+                }
+            }
+
+            function loadHistory() {
+                let savedHistory = localStorage.getItem("gameHistory");
+                if (savedHistory) {
+                    document.getElementById("history").innerHTML = savedHistory;
+                }
+            }
+
+            // Save balance and history to local storage
+            function saveBalance() {
+                localStorage.setItem("balance", balance);
+            }
+
+            function saveHistory() {
+                let history = document.getElementById("history").innerHTML;
+                localStorage.setItem("gameHistory", history);
+            }
+
+            // Start countdown
+            function startCountdown() {
+                let interval = setInterval(() => {
+                    countdown--;
+                    countdownElement.textContent = `00:${countdown < 10 ? "0" + countdown : countdown}`;
+
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        generateRandomNumber();
+                        countdown = 30;
+                        startCountdown();
+                    }
+                }, 1000);
+            }
+
+            // Generate random number and update history
+            function generateRandomNumber() {
+                let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                let colors = ["green", "red", "violet"];
+                let randomNum = numbers[Math.floor(Math.random() * numbers.length)];
+                let randomColor = colors[Math.floor(Math.random() * colors.length)];
+                let bigSmall = randomNum >= 5 ? "Big" : "Small";
+
+                let history = document.getElementById("history");
+                let newRow = `<tr>
+                                <td>${Date.now()}</td>
+                                <td class="${randomColor}">${randomNum}</td>
+                                <td>${bigSmall}</td>
+                                <td class="${randomColor}">${randomColor}</td>
+                              </tr>`;
+                history.innerHTML = newRow + history.innerHTML;
+
+                if (currentBet) {
+                    checkWin(randomNum, randomColor, bigSmall);
+                }
+
+                saveHistory();
+            }
+
+            // Check if the user won
+            function checkWin(randomNum, randomColor, bigSmall) {
+                let win = false;
+                if (currentBet.type === "color" && currentBet.value === randomColor) {
+                    win = true;
+                } else if (currentBet.type === "number" && currentBet.value === randomNum) {
+                    win = true;
+                } else if (currentBet.type === "bigSmall" && currentBet.value === bigSmall) {
+                    win = true;
+                }
+
+                if (win) {
+                    let winnings = currentAmount * currentMultiplier;
+                    balance += winnings;
+                    document.getElementById("win-sound").play();
+                    showPopup(`You won ${winnings}!`);
+                } else {
+                    balance -= currentAmount;
+                    document.getElementById("lose-sound").play();
+                    showPopup("You lost!");
+                }
+
+                balanceElement.textContent = balance;
+                currentBet = null;
+                currentMultiplier = 1;
+                currentAmount = 0;
+                saveBalance();
+            }
+
+            // Show popup with message
+            function showPopup(message) {
+                let popup = document.getElementById("popup");
+                let popupMessage = document.getElementById("popup-message");
+                popupMessage.textContent = message;
+                popup.classList.add("show");
+            }
+
+            // Close popup
+            function closePopup() {
+                let popup = document.getElementById("popup");
+                popup.classList.remove("show");
+            }
+
+            // Event listeners
+            closePopupButton.addEventListener("click", closePopup);
+
+            document.querySelectorAll(".green-btn, .violet-btn, .red-btn, .num, .big, .small").forEach(button => {
+                button.addEventListener("click", () => {
+                    document.querySelectorAll(".green-btn, .violet-btn, .red-btn, .num, .big, .small").forEach(btn => {
+                        btn.classList.remove("selected");
+                    });
+                    button.classList.add("selected");
+
+                    if (button.classList.contains("green-btn") || button.classList.contains("violet-btn") || button.classList.contains("red-btn")) {
+                        currentBet = { type: "color", value: button.textContent.toLowerCase() };
+                    } else if (button.classList.contains("num")) {
+                        currentBet = { type: "number", value: parseInt(button.textContent) };
+                    } else if (button.classList.contains("big") || button.classList.contains("small")) {
+                        currentBet = { type: "bigSmall", value: button.textContent };
+                    }
+                });
+            });
+
+            document.querySelectorAll(".multipliers button").forEach(button => {
+                button.addEventListener("click", () => {
+                    currentMultiplier = parseInt(button.textContent.replace("X", ""));
+                });
+            });
+
+            confirmBetButton.addEventListener("click", () => {
+                let betAmount = parseInt(betAmountInput.value);
+                if (betAmount > 0 && betAmount <= balance) {
+                    if (confirm(`Are you sure you want to bet ${betAmount} on ${currentBet.type} ${currentBet.value}?`)) {
+                        currentAmount = betAmount;
+                        betAmountInput.value = "";
+                        showPopup(`Bet placed: ${currentAmount} on ${currentBet.type} ${currentBet.value}`);
+                    }
+                } else {
+                    showPopup("Invalid bet amount! Please enter a valid amount.");
+                }
+            });
+
+            // Initialize
+            loadBalance();
+            loadHistory();
+            startCountdown();
+        });
+    </script>
+</body>
+</html>
